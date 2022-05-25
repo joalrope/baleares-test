@@ -44,7 +44,7 @@ export const routes = [
 		path: "/dashboard",
 		type: "private",
 		name: "dashboard",
-		role: ["Admin"],
+		role: ["admin"],
 		scope: "menu",
 		component: Dashboard,
 	},
