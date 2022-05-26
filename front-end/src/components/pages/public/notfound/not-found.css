@@ -5,7 +5,8 @@
 .page_404 {
   background: white;
   font-family: 'Arvo', serif;
-  height: 100vh;
+  height: 100%;
+  padding-top: 70px;
 }
 
 .page_404 img {
@@ -17,8 +18,8 @@
 }
 
 .four_zero_four_bg {
-  background-image: url('https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif');
-  height: 46.5vh;
+  background-image: url('../../../../assets/imgs/404_image.gif');
+  height: 45%;
   background-position: center;
   background-repeat: no-repeat;
 }
