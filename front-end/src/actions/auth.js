@@ -29,7 +29,7 @@ export const startLogin = (args) => {
       }
       form.resetFields();
 
-      history.push('/upload');
+      history.push('/playground');
     } else {
       Modal.error({
         title: 'Autenticacion',

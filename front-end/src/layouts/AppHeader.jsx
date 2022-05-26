@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu } from 'antd';
@@ -7,7 +7,7 @@ import { Header } from 'antd/lib/layout/layout';
 import { startLogout } from '../actions/auth';
 import { clearStore } from '../actions/ui';
 import history from '../helpers/history';
-import { routes } from '../router/routes';
+import { routes2 } from '../router/routes';
 
 export const role = 'admin';
 
@@ -15,7 +15,11 @@ export const AppHeader = () => {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
   const { isLoggedIn } = useSelector((state) => state.auth);
-  const mode = isLoggedIn ? 'private' : 'public';
+  const [routes, setRoutes] = useState([]);
+
+  useEffect(() => {
+    setRoutes(routes2(isLoggedIn));
+  }, [isLoggedIn]);
 
   const handleClick = ({ key }) => {
     if (key === '/logout') {
@@ -31,27 +35,21 @@ export const AppHeader = () => {
         <div className='--app__logo'>Whatever App</div>
       </div>
       <Menu theme='dark' mode='horizontal' selectedKeys={[pathname]} onClick={handleClick}>
-        {routes
-          .filter(
-            (item) =>
-              ((item.type === 'auth' && item.mode === mode) || (item.type === mode && !item.redirect)) &&
-              (!item.role || item.role.includes(role))
+        {routes.map((route) =>
+          route.scope === 'menu' ? (
+            <Menu.Item key={route.path}>
+              <Link to={route.path}>{route.name}</Link>
+            </Menu.Item>
+          ) : (
+            <SubMenu key={route.key} title={route.name}>
+              {route.children.map((child) => (
+                <Menu.Item key={child.key}>
+                  <Link to={child.path}>{child.name}</Link>
+                </Menu.Item>
+              ))}
+            </SubMenu>
           )
-          .map((route) =>
-            route.scope === 'menu' ? (
-              <Menu.Item key={route.path}>
-                <Link to={route.path}>{route.name}</Link>
-              </Menu.Item>
-            ) : (
-              <SubMenu key={route.key} title={route.name}>
-                {route.children.map((child) => (
-                  <Menu.Item key={child.key}>
-                    <Link to={child.path}>{child.name}</Link>
-                  </Menu.Item>
-                ))}
-              </SubMenu>
-            )
-          )}
+        )}
       </Menu>
     </Header>
   );

@@ -1,4 +1,4 @@
-import { Home, Dashboard, Login, Register } from '../components/pages/index';
+import { Home, Dashboard, Login, Playground, Register } from '../components/pages/index';
 
 export const routes = [
   {
@@ -28,18 +28,18 @@ export const routes = [
     component: Register,
   },
   {
-    key: '/upload',
-    path: '/upload',
+    key: '/playground',
+    path: '/playground',
     type: 'private',
-    name: 'Imagenes',
+    name: 'Playground',
     scope: 'menu',
-    component: Home,
+    component: Playground,
   },
   {
     key: '/dashboard',
     path: '/dashboard',
     type: 'private',
-    name: 'dashboard',
+    name: 'Dashboard',
     role: ['admin'],
     scope: 'menu',
     component: Dashboard,
@@ -69,15 +69,13 @@ export const routes = [
   }, */
 ];
 
-const mode = sessionStorage.isLogged ? 'private' : 'public';
-const role = 'admin';
-console.log(role);
+export const routes2 = (isLoggedIn) => {
+  const mode = isLoggedIn ? 'private' : 'public';
+  const role = 'admin';
 
-export const routes2 = () =>
-  routes.filter(
+  return routes.filter(
     (item) =>
       ((item.type === 'auth' && item.mode === mode) || (item.type === mode && !item.redirect)) &&
       (!item.role || item.role.includes(role))
   );
-
-console.log(routes2());
+};
