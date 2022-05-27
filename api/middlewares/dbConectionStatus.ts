@@ -1,18 +1,15 @@
-import { Request, Response, NextFunction } from 'express';
-import mongoose from 'mongoose';
+import { Request as Req, Response as Resp, NextFunction } from "express";
+import mongoose from "mongoose";
 
-export const dbConnectionSatus = (req: Request, res: Response, next: NextFunction) => {
-  //const states = mongoose.ConnectionStates;
-  const status = mongoose.connection.readyState;
+export const dbConnectionSatus = (req: Req, res: Resp, next: NextFunction) => {
+	const status = mongoose.connection.readyState;
 
-  console.log(status);
-
-  if (status === 0) {
-    res.status(501).json({
-      ok: false,
-      msg: 'No hay conexión con la base de datos',
-      result: {},
-    });
-  }
-  next();
+	if (status === 0) {
+		res.status(501).json({
+			ok: false,
+			msg: "No hay conexión con la base de datos",
+			result: {},
+		});
+	}
+	next();
 };

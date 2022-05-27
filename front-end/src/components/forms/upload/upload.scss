@@ -1,5 +1,10 @@
-.forms-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 5%;
+.form-container {
+	display: flex;
+	justify-content: center;
+	margin-top: 5%;
+	width: 100%;
+}
+
+.upload-form {
+	width: 66%;
 }
