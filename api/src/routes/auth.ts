@@ -62,5 +62,3 @@ userRouter.post(
 );
 
 userRouter.get("/renew", jwtValidator, revalidateToken);
-
-//module.exports = router;

@@ -5,7 +5,13 @@ import { checkStatus } from "./checkStatus";
 const baseUrl = process.env.REACT_APP_API_URL;
 let response;
 
-export const fetchPrivate = (endpoint, data, method = "GET", header) => {
+export const fetchPrivate = (
+	endpoint,
+	data,
+	method = "GET",
+	header,
+	contentType = "application/json"
+) => {
 	return async (dispatch) => {
 		const url = `${baseUrl}${endpoint}`;
 		dispatch(loadingStart());
@@ -13,7 +19,7 @@ export const fetchPrivate = (endpoint, data, method = "GET", header) => {
 		const headers =
 			method === "GET"
 				? { "x-token": token, ...header }
-				: { "content-type": "application/json", "x-token": token, ...header };
+				: { "content-type": contentType, "x-token": token, ...header };
 
 		if (method === "GET") {
 			response = fetch(url, { method, headers })

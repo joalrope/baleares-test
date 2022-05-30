@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Form, Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import "./upload.scss";
@@ -12,7 +12,11 @@ const formItemLayout = {
 	},
 };
 
+const url = `${process.env.REACT_APP_API_URL}/uploads/images`;
+
 export const UploadForm = () => {
+	const [fileList, setFileList] = useState([]);
+
 	const normFile = (e) => {
 		if (Array.isArray(e)) {
 			return e;
@@ -21,8 +25,40 @@ export const UploadForm = () => {
 		return e?.fileList;
 	};
 
-	const onFinish = (values) => {
-		console.log("Received values of form: ", values);
+	const handleChange = (info) => {
+		let newFileList = [...info.fileList]; // 1. Limit the number of uploaded files
+		// Only to show two recent uploaded files, and old ones will be replaced by the new
+
+		newFileList = fileList.slice(-2); // 2. Read from response and show file link
+
+		newFileList = fileList.map((file) => {
+			if (file.response) {
+				// Component will show file.url as link
+				file.url = file.response.url;
+			}
+
+			return file;
+		});
+		setFileList(newFileList);
+	};
+
+	const onFinish = async (values) => {
+		const data = new FormData();
+		let { dragger } = values;
+		for (let i = 0; i < dragger.length; i++) {
+			data.append("images", dragger[i].originFileObj);
+		}
+
+		const { ok } = await fetch(url, {
+			method: "POST",
+			headers: { Accept: "*/*", "x-token": sessionStorage.token },
+			body: data,
+		});
+
+		if (ok) {
+			console.log({ ok });
+			setFileList([]);
+		}
 	};
 
 	return (
@@ -40,15 +76,22 @@ export const UploadForm = () => {
 						getValueFromEvent={normFile}
 						noStyle
 					>
-						<Upload.Dragger name='files'>
+						<Upload.Dragger
+							name='files'
+							multiple
+							listType='picture'
+							accept='.png, .jpg, .jpeg'
+							onChange={handleChange}
+							beforeUpload={(file) => {
+								return false;
+							}}
+							fileList={fileList}
+						>
 							<p className='ant-upload-drag-icon'>
 								<InboxOutlined />
 							</p>
 							<p className='ant-upload-text'>
-								Click or drag file to this area to upload
-							</p>
-							<p className='ant-upload-hint'>
-								Support for a single or bulk upload.
+								Haga click o arrastre una imagen a esta area para subirla
 							</p>
 						</Upload.Dragger>
 					</Form.Item>
