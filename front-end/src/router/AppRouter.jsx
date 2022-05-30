@@ -3,12 +3,11 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { routes2 } from './routes';
 import { NotFound } from '../components/pages';
-import { role } from '../layouts/AppHeader';
+//import { role } from '../layouts/AppHeader';
 
 export const AppRouter = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   const [routes, setRoutes] = useState([]);
-  console.log(role);
 
   useEffect(() => {
     setRoutes(routes2(isLoggedIn));

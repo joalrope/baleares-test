@@ -58,6 +58,7 @@
   background-size: cover;
   background-repeat: no-repeat;
   height: calc(100vh - 135px);
+  padding: 80px;
   overflow-y: scroll;
 }
 
