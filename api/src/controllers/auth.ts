@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { User } from "../models/User";
 import { generateJWT } from "../helper/jwt";
