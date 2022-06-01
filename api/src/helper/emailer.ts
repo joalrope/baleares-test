@@ -1,26 +1,39 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
-export const transporter = nodemailer.createTransport({
-	service: "gmail",
-	auth: {
-		user: "joalrope@gmail.com",
-		pass: "Cheo.-2436",
-	},
-});
+export interface Email {
+  from: string;
+  to: string;
+  subject: string;
+  text: string;
+  html: string;
+}
 
-const mensaje = "<p>Hola desde nodejs...</p>";
+export const emailer = async (emailInfo: Email) => {
+  const { from, to, subject, text, html } = emailInfo;
 
-const mailOptions = {
-	from: "joalrope@gmail.com",
-	to: "mi-amigo@yahoo.com",
-	subject: "Asunto Del Correo",
-	html: mensaje,
+  //const testAccount = await nodemailer.createTestAccount();
+
+  const transporter = nodemailer.createTransport({
+    /* host: 'smtp.ethereal.email',
+    port: 587,
+    secure: false,
+    auth: {
+      user: testAccount.user,
+      pass: testAccount.pass,
+    }, */
+    host: 'smtp.mailtrap.io',
+    port: 2525,
+    auth: {
+      user: '16a7ded4b34373',
+      pass: 'bb6a9464e6d82c',
+    },
+  });
+
+  const info = await transporter.sendMail({
+    from,
+    to,
+    subject,
+    text,
+    html,
+  });
 };
-
-transporter.sendMail(mailOptions, function (error: any, info: any) {
-	if (error) {
-		console.log(error);
-	} else {
-		console.log("Email enviado: " + info.response);
-	}
-});

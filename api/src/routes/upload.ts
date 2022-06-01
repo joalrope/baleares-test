@@ -6,11 +6,11 @@ import {
 	getImages,
 	uploadImage,
 } from "../controllers/upload";
-//import { jwtValidator } from "../middlewares/jwt-validator";
+import { jwtValidator } from "../middlewares/jwt-validator";
 
 export const uploadRouter = Router();
 
-//uploadRouter.use(jwtValidator);
+uploadRouter.use(jwtValidator);
 
 uploadRouter.post("/", uploader, uploadImage);
 uploadRouter.get("/images", [], getImages);
