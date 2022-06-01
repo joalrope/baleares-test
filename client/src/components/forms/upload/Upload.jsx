@@ -1,102 +1,84 @@
-import React, { useState } from 'react';
-import { Button, Form, Upload } from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
-import './upload.scss';
-
-const formItemLayout = {
-  labelCol: {
-    span: 6,
-  },
-  wrapperCol: {
-    span: 8,
-  },
-};
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Button, message, Space, Upload } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
+import { loadingFinish, loadingStart } from "../../../actions/ui";
+import "./upload.scss";
+import history from "../../../helpers/history";
 
 const url = `${process.env.REACT_APP_API_URL}/uploads/`;
 
 export const UploadForm = () => {
-  const [fileList, setFileList] = useState([]);
+	const [fileList, setFileList] = useState([]);
+	const dispatch = useDispatch();
 
-  const normFile = (e) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
+	const handleUpload = () => {
+		const formData = new FormData();
+		fileList.forEach((file) => {
+			formData.append("images", file);
+		});
+		dispatch(loadingStart());
+		fetch(url, {
+			method: "POST",
+			headers: { Accept: "*/*", "x-token": sessionStorage.token },
+			body: formData,
+		})
+			.then((res) => res.json())
+			.then(() => {
+				setFileList([]);
+				history.push("/dashboard");
+				history.push("/playground");
+				message.success("Las imagenes se cargaron exitosamente");
+			})
+			.catch(() => {
+				message.error("Ocurrio un fallo al cargar las imagenes.");
+			})
+			.finally(() => {
+				dispatch(loadingFinish());
+			});
+	};
 
-    return e?.fileList;
-  };
+	const props = {
+		onRemove: (file) => {
+			const newFileList = fileList.filter((item) => item.uid !== file.uid);
+			setFileList(newFileList);
+		},
+		beforeUpload: (file) => {
+			setFileList([...fileList, file]);
+			return false;
+		},
+		fileList,
+	};
 
-  /* const handleChange = (info) => {
-    let newFileList = [...info.fileList]; // 1. Limit the number of uploaded files
-    // Only to show two recent uploaded files, and old ones will be replaced by the new
+	return (
+		<div className='form-container'>
+			<Space align='center' direction='vertical'>
+				<Upload.Dragger
+					listType='picture'
+					accept='.png, .jpg, .jpeg'
+					{...props}
+					style={{ height: "80px !important", padding: "18px", width: "350px" }}
+				>
+					<p className='ant-upload-drag-icon'>
+						<InboxOutlined />
+					</p>
+					<p className='ant-upload-text'>
+						Haga click o arrastre una imagen a esta area para subirla
+					</p>
+				</Upload.Dragger>
 
-    newFileList = fileList.slice(-2); // 2. Read from response and show file link
-
-    newFileList = fileList.map((file) => {
-      if (file.response) {
-        // Component will show file.url as link
-        file.url = file.response.url;
-      }
-
-      return file;
-    });
-    setFileList(newFileList);
-  }; */
-
-  const onFinish = async (values) => {
-    const data = new FormData();
-    let { dragger } = values;
-    for (let i = 0; i < dragger.length; i++) {
-      data.append('images', dragger[i].originFileObj);
-    }
-
-    const { ok } = await fetch(url, {
-      method: 'POST',
-      headers: { Accept: '*/*', 'x-token': sessionStorage.token },
-      body: data,
-    });
-
-    if (ok) {
-      console.log({ ok });
-      setFileList([]);
-    }
-  };
-
-  return (
-    <div className='form-container'>
-      <Form className='upload-form' name='upload-form' {...formItemLayout} onFinish={onFinish}>
-        <Form.Item className='form-item-container'>
-          <Form.Item name='dragger' valuePropName='fileList' getValueFromEvent={normFile} noStyle>
-            <Upload.Dragger
-              name='files'
-              multiple
-              listType='picture'
-              accept='.png, .jpg, .jpeg'
-              //onChange={handleChange}
-              beforeUpload={(file) => {
-                return false;
-              }}
-              fileList={fileList}
-            >
-              <p className='ant-upload-drag-icon'>
-                <InboxOutlined />
-              </p>
-              <p className='ant-upload-text'>Haga click o arrastre una imagen a esta area para subirla</p>
-            </Upload.Dragger>
-          </Form.Item>
-        </Form.Item>
-
-        <Form.Item
-          className='form-item-container'
-          wrapperCol={{
-            span: 12,
-            offset: 0,
-          }}
-        >
-          <Button type='primary' htmlType='submit'>
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
-  );
+				<Button
+					type='primary'
+					onClick={handleUpload}
+					disabled={fileList.length === 0}
+					style={{
+						marginTop: 16,
+						width: "150px",
+					}}
+				>
+					Submit
+				</Button>
+			</Space>
+		</div>
+	);
 };

@@ -1,5 +1,6 @@
 .form-container {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	margin-top: 5%;
 	width: 100%;
@@ -9,7 +10,7 @@
 	width: 66%;
 }
 
-.form-item-container{
+.form-item-container {
 	display: flex;
 	justify-content: center;
 }

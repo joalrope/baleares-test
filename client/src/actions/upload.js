@@ -1,15 +1,14 @@
 import { fetchPrivate } from "../helpers/fetch/fetchPrivate";
 
-export const getImages = (data) => {
+export const getImages = () => {
 	return async (dispatch) => {
 		try {
-			const resultUpload = await dispatch(
-				fetchPrivate("/uploads/images", data, "POST", {}, "multipart/form-data")
+			const { ok, msg, result } = await dispatch(
+				fetchPrivate("/uploads/images")
 			);
 
-			const { ok, msg, result } = resultUpload;
 			if (ok) {
-				console.log(msg, result);
+				return result;
 			} else {
 				console.log(msg);
 			}
@@ -19,14 +18,20 @@ export const getImages = (data) => {
 	};
 };
 
-export const getImagexxx = () => {
+export const deleteImage = (userId, image) => {
 	return async (dispatch) => {
-		const { ok, result } = await dispatch(
-			fetchPrivate(`/quizzes/page/${"page"}/size/${"pageSize"}`)
-		);
+		try {
+			const { ok, msg } = await dispatch(
+				fetchPrivate(`/uploads/user/${userId}/img/${image}`, {}, "DELETE")
+			);
 
-		if (ok) {
-			return result;
+			if (ok) {
+				return { ok, msg };
+			} else {
+				console.log("msg delete:", msg);
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 };

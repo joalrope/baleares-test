@@ -1,53 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { getImages } from "../../../actions/upload";
 import { UploadForm } from "../../forms/upload/Upload";
 import { CardGrid } from "../../ui/card/CardGrid";
 
-const dataImages = [
-	{
-		id: "1001",
-		name: "Jose Rodriguez",
-		userId: "62943d6c11ffab036b9997f5",
-		image: "Cedula Cheo.jpg",
-	},
-	{
-		id: "1002",
-		name: "Jose Rodriguez",
-		userId: "62943d6c11ffab036b9997f5",
-		image: "joalrope.jpg",
-	},
-	{
-		id: "1003",
-		name: "Jose Rodriguez",
-		userId: "62943d6c11ffab036b9997f5",
-		image: "joalrope200x200.png",
-	},
-	{
-		id: "1004",
-		name: "Jose Rodriguez",
-		userId: "62943d6c11ffab036b9997f5",
-		image: "Cedula Cheo.jpg",
-	},
-	{
-		id: "1005",
-		name: "Jose Rodriguez",
-		userId: "62943d6c11ffab036b9997f5",
-		image: "joalrope.jpg",
-	},
-	{
-		id: "1006",
-		name: "Jose Rodriguez",
-		userId: "62943d6c11ffab036b9997f5",
-		image: "joalrope200x200.png",
-	},
-];
+export const ImagesContext = createContext(null);
 
 export const Playground = () => {
+	const dispatch = useDispatch();
 	const [images, setImages] = useState([]);
+	const imgCtxValue = { images, setImages };
 
 	useEffect(() => {
 		let abortController = new AbortController();
 		const fetchData = async () => {
-			setImages(dataImages);
+			const result = await dispatch(getImages());
+
+			console.log(result);
+
+			const sortResult = result.sort((a, b) => a.image - b.image);
+
+			setImages(sortResult);
 		};
 
 		fetchData();
@@ -55,12 +28,14 @@ export const Playground = () => {
 		return () => {
 			abortController.abort();
 		};
-	}, []);
+	}, [dispatch]);
 
 	return (
 		<div className='container'>
-			<CardGrid images={images} />
-			<UploadForm />
+			<ImagesContext.Provider value={imgCtxValue}>
+				<CardGrid images={images} />
+				<UploadForm />
+			</ImagesContext.Provider>
 		</div>
 	);
 };

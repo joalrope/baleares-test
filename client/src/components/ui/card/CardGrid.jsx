@@ -6,9 +6,9 @@ import "./card-grid.scss";
 export const CardGrid = ({ images }) => {
 	return (
 		<Row gutter={[24, 24]} justify='space-around' className='row-card'>
-			{images.map((img) => (
+			{images?.map(({ id, name, userId, image }) => (
 				<Col
-					key={img.id}
+					key={id}
 					xs={24}
 					sm={18}
 					md={12}
@@ -16,7 +16,7 @@ export const CardGrid = ({ images }) => {
 					xl={4}
 					style={{ display: "flex", justifyContent: "center" }}
 				>
-					<ImgCard userName={img.name} userId={img.userId} image={img.image} />
+					<ImgCard id={id} userName={name} userId={userId} image={image} />
 				</Col>
 			))}
 		</Row>
